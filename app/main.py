@@ -1,5 +1,5 @@
 import sys
-
+import os
 
 def main():
     # # TODO: Uncomment the code below to pass the first stage
@@ -7,6 +7,8 @@ def main():
     # pass
     while True:
         command = input("$ ")
+        if len(command) == 0:
+            continue
         cmd = command.split()[0]
         args = command.split()[1:]
         valid_cmds = ("exit", "echo", "type")
@@ -19,7 +21,24 @@ def main():
             if args and args[0] in valid_cmds:
                 print(f'{args[0]} is a shell builtin')
             else:
-                print(f'{args[0]}: not found')           
+                path_env = os.getenv("PATH", "")
+                paths = path_env.split(os.pathsep)
+                found = False
+                
+                for p in paths:
+                    if os.path.isdir(p):
+                        try:
+                            for e in os.scandir(p):
+                                if e.is_file() and e.name == args[0] and os.access(e, os.X_OK): 
+                                    print(f'{args[0]} is {e.path}')
+                                    found = True
+                                    break
+                        except PermissionError:
+                            continue
+                    if found:
+                        break                        
+                if not found:
+                    print(f'{args[0]}: not found')           
         else:
             print(f'{command}: command not found')
 
