@@ -45,11 +45,11 @@ def main():
 
             if executable_path:
                 try:
-                    cmd_exe = subprocess.run([executable_path, *args], capture_output=True, text=True)
+                    cmd_exe = subprocess.run([cmd, *args], capture_output=True, text=True)
                     print(cmd_exe.stdout, end="")
                 except OSError as e:
                     if e.errno == 8: 
-                        cmd_exe = subprocess.run([sys.executable, executable_path, *args], capture_output=True, text=True)
+                        cmd_exe = subprocess.run([sys.executable, cmd, *args], capture_output=True, text=True)
                         print(cmd_exe.stdout, end="")
                     else:
                         raise e
