@@ -2,9 +2,12 @@ import sys
 
 
 def main():
-    # TODO: Uncomment the code below to pass the first stage
-    sys.stdout.write("$ ")
-    pass
+    # # TODO: Uncomment the code below to pass the first stage
+    # sys.stdout.write("$ ")
+    # pass
+
+    command = input("$ ")
+    print(f'{command} not found')
 
 
 if __name__ == "__main__":
