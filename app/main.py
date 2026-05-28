@@ -7,6 +7,8 @@ def main():
     # pass
     while True:
         command = input("$ ")
+        if command == "exit":
+            break
         print(f'{command}: command not found')
 
 
