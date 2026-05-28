@@ -2,10 +2,18 @@ import sys
 import os
 import subprocess
 
+def find_in_path(cmd):
+    path_env = os.getenv("PATH", "")
+    paths = path_env.split(os.pathsep)
+    
+    for p in paths:
+        if os.path.isdir(p):
+            full_path = os.path.join(p, cmd)
+            if os.path.isfile(full_path) and os.access(full_path, os.X_OK):
+                return full_path
+    return None
+
 def main():
-    # # TODO: Uncomment the code below to pass the first stage
-    # sys.stdout.write("$ ")
-    # pass
     while True:
         command = input("$ ")
         if len(command) == 0:
@@ -22,32 +30,31 @@ def main():
             if args and args[0] in valid_cmds:
                 print(f'{args[0]} is a shell builtin')
             else:
-                path_env = os.getenv("PATH", "")
-                paths = path_env.split(os.pathsep)
-                found = False
-                
-                for p in paths:
-                    if os.path.isdir(p):
-                        try:
-                            for e in os.scandir(p):
-                                if e.is_file() and e.name == args[0] and os.access(e, os.X_OK): 
-                                    print(f'{args[0]} is {e.path}')
-                                    found = True
-                                    break
-                        except PermissionError:
-                            continue
-                    if found:
-                        break                        
-                if not found:
+                found_path = find_in_path(args[0])
+                if found_path:
+                    print(f'{args[0]} is {found_path}')
+                else:
                     print(f'{args[0]}: not found')           
         else:            
-            cmd_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), cmd)
-            if os.path.isfile(cmd_path) and os.access(cmd_path, os.X_OK):
-                cmd_exe = subprocess.run([sys.executable, cmd_path, *args], capture_output=True, text=True, check=True)
-                print(cmd_exe.stdout)
-                
-                # print(f'{command}: command not found')
+            executable_path = find_in_path(cmd)
+            
+            if not executable_path:
+                local_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), cmd)
+                if os.path.isfile(local_path) and os.access(local_path, os.X_OK):
+                    executable_path = local_path
 
+            if executable_path:
+                try:
+                    cmd_exe = subprocess.run([executable_path, *args], capture_output=True, text=True)
+                    print(cmd_exe.stdout, end="")
+                except OSError as e:
+                    if e.errno == 8: 
+                        cmd_exe = subprocess.run([sys.executable, executable_path, *args], capture_output=True, text=True)
+                        print(cmd_exe.stdout, end="")
+                    else:
+                        raise e
+            else:
+                print(f'{cmd}: command not found')
 
 if __name__ == "__main__":
     main()
