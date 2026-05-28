@@ -44,7 +44,7 @@ def main():
             cmd_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), cmd)
             if os.path.isfile(cmd_path) and os.access(cmd_path, os.X_OK):
                 cmd_exe = subprocess.run([sys.executable, cmd, *args], capture_output=True, text=True, check=True)
-                print(cmd_exe.stdout)
+                print(cmd_exe.stdout, end="")
                 
                 # print(f'{command}: command not found')
 
