@@ -7,9 +7,14 @@ def main():
     # pass
     while True:
         command = input("$ ")
-        if command == "exit":
+        cmd = command.split()[0]
+        args = command.split()[1:]
+        if cmd == "exit":
             break
-        print(f'{command}: command not found')
+        elif cmd == "echo":
+            print(" ".join(args))
+        else:
+            print(f'{command}: command not found')
 
 
 if __name__ == "__main__":
