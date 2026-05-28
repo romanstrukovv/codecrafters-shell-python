@@ -19,7 +19,7 @@ def main():
             if args and args[0] in valid_cmds:
                 print(f'{args[0]} is a shell builtin')
             else:
-                print(f'{command}: command not found')           
+                print(f'{args[0]}: command not found')           
         else:
             print(f'{command}: command not found')
 
