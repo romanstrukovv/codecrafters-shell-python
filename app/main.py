@@ -8,8 +8,8 @@ def main():
     # pass
     while True:
         command = input("$ ")
-        if len(command) == 0:
-            continue
+        # if len(command) == 0:
+        #     continue
         cmd = command.split()[0]
         args = command.split()[1:]
         valid_cmds = ("exit", "echo", "type")
