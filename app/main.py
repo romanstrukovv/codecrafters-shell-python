@@ -15,13 +15,37 @@ def find_in_path(cmd):
 
 def main():
     last_cd_path = ""
+    valid_cmds = ("exit", "echo", "type", "pwd", "cd")
+
     while True:
         command = input("$ ")
-        if len(command) == 0:
+        in_quotes = False
+        cmd = ""
+        args = []
+        args_str = ""
+        n = len(command)
+
+        if n == 0:
             continue
-        cmd = command.split()[0]
-        args = command.split()[1:]
-        valid_cmds = ("exit", "echo", "type", "pwd", "cd")
+        
+        i = 0
+        while i < n:
+            if command[i] != " ":
+                cmd += command[i]
+                i += 1
+            else:
+                i += 1
+                break
+        command = command[i:]
+        
+        for char in command:
+            if char == "'":
+                in_quotes = True
+                continue
+            if in_quotes:
+                args_str += char
+        
+        args = args_str if in_quotes else command.split()
 
         if cmd == "exit":
             break
