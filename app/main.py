@@ -19,7 +19,7 @@ def main():
     valid_cmds = ("exit", "echo", "type", "pwd", "cd")
 
     while True:
-        command = input(f"{os.getlogin()}:$ ")
+        command = input("$ ")
         in_quotes = False
         cmd = ""
         args = []
