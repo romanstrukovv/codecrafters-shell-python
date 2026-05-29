@@ -1,6 +1,7 @@
 import sys
 import os
 import subprocess
+from collections import deque
 
 def find_in_path(cmd):
     path_env = os.getenv("PATH", "")
@@ -18,14 +19,14 @@ def main():
     valid_cmds = ("exit", "echo", "type", "pwd", "cd")
 
     while True:
-        command = input("$ ")
+        command = input(f"{os.getlogin()}:$ ")
         in_quotes = False
         cmd = ""
         args = []
         args_str = ""
         n = len(command)
 
-        if n == 0:
+        if not command:
             continue
         
         i = 0
@@ -37,15 +38,20 @@ def main():
                 i += 1
                 break
         command = command[i:]
-        
+        st = deque()
         for char in command:
             if char == "'":
-                in_quotes = True
+                if len(st) == 0:
+                    st.append(char)
+                    in_quotes = True
+                elif len(st) == 1:
+                    st.pop()
+                    in_quotes = False
                 continue
             if in_quotes:
                 args_str += char
         
-        args = args_str if in_quotes else command.split()
+        args = args_str if args_str else command.split()
 
         if cmd == "exit":
             break
@@ -66,14 +72,17 @@ def main():
             else:
                 print(f'cd: {args[0]}: No such file or directory')
         elif cmd == "type": 
-            if args and args[0] in valid_cmds:
-                print(f'{args[0]} is a shell builtin')
+            if not args:
+                continue
             else:
-                found_path = find_in_path(args[0])
-                if found_path:
-                    print(f'{args[0]} is {found_path}')
+                if args[0] in valid_cmds:
+                    print(f'{args[0]} is a shell builtin')
                 else:
-                    print(f'{args[0]}: not found')           
+                    found_path = find_in_path(args[0])
+                    if found_path:
+                        print(f'{args[0]} is {found_path}')
+                    else:
+                        print(f'{args[0]}: not found')           
         else:            
             executable_path = find_in_path(cmd)
             
