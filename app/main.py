@@ -14,13 +14,14 @@ def find_in_path(cmd):
     return None
 
 def main():
+    last_cd_path = ""
     while True:
         command = input("$ ")
         if len(command) == 0:
             continue
         cmd = command.split()[0]
         args = command.split()[1:]
-        valid_cmds = ("exit", "echo", "type", "pwd")
+        valid_cmds = ("exit", "echo", "type", "pwd", "cd")
 
         if cmd == "exit":
             break
@@ -29,11 +30,17 @@ def main():
         elif cmd == "echo":
             print(" ".join(args))
         elif cmd == "cd":
-            path = args[0]
-            if os.path.isdir(path):
-                os.chdir(path)
+            if len(args) == 0:
+                continue
+            if args[0] == '-':
+                os.chdir(last_cd_path)                
+            elif args[0] == '~':
+                os.chdir(os.getenv("HOME"))
+            elif os.path.isdir(args[0]):
+                last_cd_path = os.getcwd()
+                os.chdir(args[0])
             else:
-                print(f'cd: {path}: No such file or directory')
+                print(f'cd: {args[0]}: No such file or directory')
         elif cmd == "type": 
             if args and args[0] in valid_cmds:
                 print(f'{args[0]} is a shell builtin')
