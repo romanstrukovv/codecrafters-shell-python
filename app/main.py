@@ -20,10 +20,12 @@ def main():
             continue
         cmd = command.split()[0]
         args = command.split()[1:]
-        valid_cmds = ("exit", "echo", "type")
+        valid_cmds = ("exit", "echo", "type", "pwd")
 
         if cmd == "exit":
             break
+        elif cmd == "pwd":
+            print(os.getcwd())
         elif cmd == "echo":
             print(" ".join(args))
         elif cmd == "type": 
@@ -45,11 +47,11 @@ def main():
 
             if executable_path:
                 try:
-                    cmd_exe = subprocess.run([cmd, *args], capture_output=True, text=True)
+                    cmd_exe = subprocess.run([cmd, *args], executable=executable_path, capture_output=True, text=True)
                     print(cmd_exe.stdout, end="")
                 except OSError as e:
                     if e.errno == 8: 
-                        cmd_exe = subprocess.run([sys.executable, cmd, *args], capture_output=True, text=True)
+                        cmd_exe = subprocess.run([sys.executable, executable_path, *args], executable=executable_path, capture_output=True, text=True)
                         print(cmd_exe.stdout, end="")
                     else:
                         raise e
@@ -58,3 +60,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
