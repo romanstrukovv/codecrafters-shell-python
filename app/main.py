@@ -21,6 +21,7 @@ def main():
     while True:
         command = input("$ ")
         in_quotes = False
+        in_double_quotes = False
         cmd = ""
         args = []
         args_str = ""
@@ -41,32 +42,38 @@ def main():
         st = deque()
         
         for char in command:
-            if char == "'":
+            if char == '"':
                 if len(st) == 0:
                     st.append(char)
-                    in_quotes = True
+                    in_double_quotes = True
                 elif len(st) == 1:
                     st.pop()
-                    in_quotes = False
+                    in_double_quotes = False
                 continue
-            
-            # --- MINIMAL UPDATES HERE ---
-            if in_quotes:
+            if char == "'":
+                if in_double_quotes:
+                    args_str += char
+                    continue
+                else:
+                    if len(st) == 0:
+                        st.append(char)
+                        in_quotes = True
+                    elif len(st) == 1:
+                        st.pop()
+                        in_quotes = False
+                    continue            
+            if in_quotes or in_double_quotes:
                 args_str += char
             else:
                 if char == " ":
-                    if args_str:  # If we have a finished argument
+                    if args_str: 
                         args.append(args_str)
-                        args_str = ""  # Reset for the next argument
+                        args_str = ""  
                 else:
-                    args_str += char  # Capture letters outside quotes
+                    args_str += char  
 
-        # Don't forget to grab the very last argument after the loop ends!
         if args_str:
             args.append(args_str)
-        
-        # print(f"args_str: {args_str}")
-        # args = args_str if args_str else command.split()
 
         if cmd == "exit":
             break
