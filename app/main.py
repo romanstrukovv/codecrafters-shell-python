@@ -51,6 +51,7 @@ def main():
             if in_quotes:
                 args_str += char
         
+        # print(f"args_str: {args_str}")
         args = args_str if args_str else command.split()
 
         if cmd == "exit":
@@ -58,7 +59,12 @@ def main():
         elif cmd == "pwd":
             print(os.getcwd())
         elif cmd == "echo":
-            print(" ".join(args))
+            if isinstance(args, list): 
+                print(" ".join(args))
+            elif isinstance(args, str):
+                print(args)
+            else:
+                raise TypeError("Argument of 'echo' can only be a string or a list of strings")
         elif cmd == "cd":
             if len(args) == 0:
                 continue
