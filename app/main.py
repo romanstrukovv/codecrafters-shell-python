@@ -28,6 +28,12 @@ def main():
             print(os.getcwd())
         elif cmd == "echo":
             print(" ".join(args))
+        elif cmd == "cd":
+            path = args[0]
+            if os.path.isdir(path):
+                os.chdir(path)
+            else:
+                print(f'cd: {path}: No such file or directory')
         elif cmd == "type": 
             if args and args[0] in valid_cmds:
                 print(f'{args[0]} is a shell builtin')
