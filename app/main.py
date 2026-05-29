@@ -39,6 +39,7 @@ def main():
                 break
         command = command[i:]
         st = deque()
+        
         for char in command:
             if char == "'":
                 if len(st) == 0:
@@ -48,11 +49,24 @@ def main():
                     st.pop()
                     in_quotes = False
                 continue
+            
+            # --- MINIMAL UPDATES HERE ---
             if in_quotes:
                 args_str += char
+            else:
+                if char == " ":
+                    if args_str:  # If we have a finished argument
+                        args.append(args_str)
+                        args_str = ""  # Reset for the next argument
+                else:
+                    args_str += char  # Capture letters outside quotes
+
+        # Don't forget to grab the very last argument after the loop ends!
+        if args_str:
+            args.append(args_str)
         
         # print(f"args_str: {args_str}")
-        args = args_str if args_str else command.split()
+        # args = args_str if args_str else command.split()
 
         if cmd == "exit":
             break
